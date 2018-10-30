@@ -1,0 +1,8 @@
+#require "oUnit";;
+#require "yojson";;
+#require "ANSITerminal";;
+#require "str";;
+#directory "_build";;
+#load "flashcard.cmo";;
+#load "command.cmo";;
+#load "state.cmo";;
