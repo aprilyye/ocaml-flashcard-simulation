@@ -143,8 +143,8 @@ let rec choose_mode st =
     start_test_mode {st with mode_deck=st.deck; score = 0; incorrect=[]; current = (Flashcard.first_card st.deck); already_seen=[]} "t"
   | Practice_starred -> start_practice_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
   | Test_starred -> start_test_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
-  | Add_card -> print_string "inadd"; let new_card = make_card () in choose_mode ({st with deck = (if Flashcard.mem new_card st.deck then st.deck
-                                                                                                   else st.deck @ [new_card])})
+  | Add_card -> let new_card = make_card () in choose_mode ({st with deck = (if Flashcard.mem new_card st.deck then st.deck
+                                                                             else st.deck @ [new_card])})
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); choose_mode st
 
 and next_turn_test st mode = 
@@ -309,6 +309,10 @@ let rec start_study deck =
     let st = State.init_state deck in start_practice_mode st "p"
   | Test ->  ANSITerminal.erase ANSITerminal.Above; 
     let st = State.init_state deck in start_test_mode st "t"
+  | Add_card -> let new_card = make_card () in
+    print_string "\n[p] practice\n[t] test\n[ac] add card\n";
+    start_study (if Flashcard.mem new_card deck then deck
+                 else deck @ [new_card])
   | _ -> ANSITerminal.erase ANSITerminal.Above ; 
     unknown_user_input (); start_study deck
 
@@ -327,7 +331,7 @@ let rec main_helper file_input =
        main_helper (read_line ())
      | deck -> (ANSITerminal.(print_string [red]
                                 "\nWhat mode would you like to study in?"));
-       print_string "\n[p] practice\n[t] test\n";
+       print_string "\n[p] practice\n[t] test\n[ac] add card\n";
        start_study deck)
 
 (**[main ()] prompts for the game to play, then starts it. *)
