@@ -1,0 +1,5 @@
+syntax,how code is written
+immutable,state is not changed
+semantics,how code is *evaluated*
+static semantics,*compile-time* evaluation
+dynamic semantics,*run-time* evaluation
