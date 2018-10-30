@@ -16,6 +16,7 @@ type command =
   | Test_starred
   | Terms
   | Defs
+  | Add_card
   | Text of string 
 
 exception Empty 
@@ -57,4 +58,5 @@ let parse str =
       else if h = "defs" then Defs
       else if h = "star" then Star
       else if h = "unstar" then Unstar
+      else if h = "ac" then Add_card
       else raise Malformed

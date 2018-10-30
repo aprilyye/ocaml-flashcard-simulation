@@ -57,6 +57,7 @@ let print_defs st =
    if the input is not a [command], an exception calls [unknown_user_input].
    This user_input is used for every command*)
 let rec user_input () =
+  print_string "inuserInput";
   ANSITerminal.(print_string [default] ("\n"));
   print_string  "> ";
   match read_line () with
@@ -78,6 +79,11 @@ let rec user_input_test () =
       | Next -> Next
       | _ -> unknown_user_input (); user_input_test ())
 
+let user_input_text () = 
+  ANSITerminal.(print_string [default] ("\n"));
+  print_string "> ";
+  read_line ()
+
 (**[prompt_shuffle()] prompts the user to choose to practice or test with the 
    [deck] in the order of the input CSV, or in a random order*)
 let rec prompt_shuffle () = 
@@ -93,6 +99,16 @@ let rec prompt_shuffle () =
      print_endline "\n"; Pervasives.exit 0)
   | _ -> 
     ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); prompt_shuffle ()
+
+(**[make_card ()] is a new flashcard with term and definition based on the user input*)
+let make_card ()  = 
+  ANSITerminal.(print_string [red] "\nTerm:"); 
+  let front = user_input_text() in 
+  ANSITerminal.(print_string [red] "\nDefinition:"); 
+  let back = user_input_text () in 
+  let fuzzy = Flashcard.make_fuzzy_set back (List.rev (Flashcard.star_index_finder back [])) in 
+  {front = front; back = back; fuzzy = fuzzy; facing = 
+                                                "front"; attempts = 0}
 
 let rec prompt_terms () = 
   ANSITerminal.(print_string [red] "\nDo you want to be prompted with terms or definitions?"); 
@@ -110,7 +126,7 @@ let rec prompt_terms () =
    five modes and proceeds with taht mode *)
 let rec choose_mode st =
   ANSITerminal.(print_string [red] "\nWhat do you want to do next?");
-  print_string "\n[p] practice all\n[pw] practice wrongs\n[ps] practice starred\n[t] test all\n[tw] test wrongs\n[ts] test starred\n[quit]\n";
+  print_string "\n[p] practice all\n[pw] practice wrongs\n[ps] practice starred\n[t] test all\n[tw] test wrongs\n[ts] test starred\n[ac] add card\n[quit]\n";
   let cmd = user_input () in 
   match cmd with 
   | Quit -> ANSITerminal.erase ANSITerminal.Above; 
@@ -127,6 +143,8 @@ let rec choose_mode st =
     start_test_mode {st with mode_deck=st.deck; score = 0; incorrect=[]; current = (Flashcard.first_card st.deck); already_seen=[]} "t"
   | Practice_starred -> start_practice_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
   | Test_starred -> start_test_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
+  | Add_card -> print_string "inadd"; let new_card = make_card () in choose_mode ({st with deck = (if Flashcard.mem new_card st.deck then st.deck
+                                                                                                   else st.deck @ [new_card])})
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); choose_mode st
 
 and next_turn_test st mode = 

@@ -16,6 +16,7 @@ type command =
   | Test_starred
   | Terms
   | Defs
+  | Add_card
   | Text of string 
 
 (** Raised when an empty command is parsed. *)

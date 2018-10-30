@@ -58,3 +58,5 @@ val mem: notecard -> t -> bool
 
 (**[star_index_finder str] returns a list of the indices of * in [str]*)
 val star_index_finder: string -> int list -> int list
+
+val make_fuzzy_set: string -> int list -> string list
