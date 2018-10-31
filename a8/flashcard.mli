@@ -20,16 +20,18 @@ type t = notecard list
 val first_card: t-> notecard option
 
 (**[find card deck] 
-   returns [card] if the card is in the [deck] fails the [card] is not in the [deck]*)
+   returns [card] if the card is in the [deck] fails the [card] is not in the 
+   [deck]*)
 val find_card: t -> notecard -> notecard
 
-(**[term card deck] returns the the [term] of the given notecard if the card is in the [deck] 
-   and fails if the [deck] is the empty or the [card] is not in the [deck]*)
+(**[term card deck] returns the the [term] of the given notecard if the card is 
+   in the [deck] and fails if the [deck] is the empty or the [card] is not in 
+   the [deck]*)
 val term: notecard-> t -> back
 
-(**[definition cd deck] returns the the [term] of the given notecard if the [card] is in 
-   the [deck] and fails if the [deck] is  empty or the [notecard] is not in the 
-   [deck]*)
+(**[definition cd deck] returns the the [term] of the given notecard if the 
+   [card] is in the [deck] and fails if the [deck] is  empty or the [notecard] 
+   is not in the [deck]*)
 val definition: notecard-> t -> back
 
 (**[fuzzy_set card deck] 
@@ -37,8 +39,8 @@ val definition: notecard-> t -> back
    of [card] in [decl]*)
 val fuzzy_set: notecard -> t -> string list
 
-(**[parse_csv file] checks that an input [file] is a CSV and opens the [file] if it 
-   is in the working directory, then parses the lines into a [deck] of 
+(**[parse_csv file] checks that an input [file] is a CSV and opens the [file] if
+   it is in the working directory, then parses the lines into a [deck] of 
    [notecards]*)
 val parse_csv: string -> t 
 
@@ -47,13 +49,15 @@ val parse_csv: string -> t
    of a [notecard] depending on [prompt]*)
 val which_fuzzy: notecard -> t -> String.t -> string -> bool
 
-(**[equals n1 n2] compares two notecards based on their [front] and [back] fields*)
+(**[equals n1 n2] compares two notecards based on their [front] and [back] 
+   fields*)
 val equals: notecard -> notecard -> bool
 
 (**[remove notecard deck] removes [notecard] from [deck]*)
 val remove: notecard -> t -> t
 
-(**[mem notecard deck] returns true if a [notecard] is in a [deck] and false otherwise*)
+(**[mem notecard deck] returns true if a [notecard] is in a [deck] and false 
+   otherwise*)
 val mem: notecard -> t -> bool
 
 (**[star_index_finder str] returns a list of the indices of * in [str]*)
