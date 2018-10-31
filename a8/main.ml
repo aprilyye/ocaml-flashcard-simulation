@@ -66,7 +66,6 @@ let print_defs st =
    if the input is not a [command], an exception calls [unknown_user_input].
    This user_input is used for every command*)
 let rec user_input () =
-  print_string "inuserInput";
   ANSITerminal.(print_string [default] ("\n"));
   print_string  "> ";
   match read_line () with
