@@ -3,6 +3,8 @@
 type command =
   | Next
   | Flip
+  | Star 
+  | Unstar
   | Quit
   | Random
   | Ordered 
@@ -10,8 +12,11 @@ type command =
   | Test
   | Practice_wrongs
   | Test_wrongs
+  | Practice_starred
+  | Test_starred
   | Terms
   | Defs
+  | Add_card
   | Text of string 
 
 exception Empty 
@@ -45,8 +50,13 @@ let parse str =
       else if h = "t" then Test
       else if h = "pw" then Practice_wrongs
       else if h = "tw" then Test_wrongs
+      else if h = "ps" then Practice_starred
+      else if h = "ts" then Test_starred
       else if h = "yes" then Random 
       else if h = "no" then Ordered 
       else if h = "terms" then Terms
       else if h = "defs" then Defs
+      else if h = "star" then Star
+      else if h = "unstar" then Unstar
+      else if h = "ac" then Add_card
       else raise Malformed

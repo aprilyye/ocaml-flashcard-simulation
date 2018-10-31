@@ -12,6 +12,7 @@ type t = {
   incorrect: Flashcard.t;
   mode_deck: Flashcard.t;
   already_seen: Flashcard.t;
+  starred: Flashcard.t;
 }
 
 (** [init_state deck] is the initial state of the game when studying the deck
@@ -57,3 +58,7 @@ val get_face: t -> string
 (**[in_correct_pile st] is true if the [current] card is in the correct
    pile and false otherwise*)
 val in_correct_pile: t -> bool
+
+val star_card: t-> Flashcard.t
+
+val unstar_card: t-> Flashcard.t

@@ -16,7 +16,8 @@ type t = {
   correct: Flashcard.t;
   incorrect: Flashcard.t;
   mode_deck: Flashcard.t;
-  already_seen: Flashcard.t 
+  already_seen: Flashcard.t;
+  starred: Flashcard.t; 
 }
 
 (** [init_state deck] is the initial state of the game when studying the deck
@@ -36,6 +37,7 @@ let init_state deck=
     incorrect=[]; 
     mode_deck=deck;
     already_seen = []; 
+    starred = [];
   }
 
 (* the state [st] of the current deck *)
@@ -131,3 +133,19 @@ let in_correct_pile st =
   match st.current with 
   | None -> failwith "no current card"
   | Some card -> if Flashcard.mem card st.correct then true else false
+
+
+(**[star_card st] is a new deck of starred cards with the current card added to it
+   if the current card is already starred then the unchanged starred deck is returned *)
+let star_card st = 
+  let cur_card = remove_option st in 
+  let already_in = Flashcard.mem  cur_card st.starred in
+  if already_in then st.starred else (st.starred @ [cur_card])
+
+
+(**[unstar_card st] is a new deck of starred cards with the current card removed from it
+   if the current card is not starred then the unchanged starred deck is returned *)
+let unstar_card st = 
+  let cur_card = remove_option st in 
+  let already_in = Flashcard.mem cur_card st.starred in 
+  if already_in then Flashcard.remove cur_card st.starred else st.starred

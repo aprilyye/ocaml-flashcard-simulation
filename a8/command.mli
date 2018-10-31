@@ -3,6 +3,8 @@
 type command =
   | Next
   | Flip
+  | Star 
+  | Unstar
   | Quit
   | Random
   | Ordered 
@@ -10,9 +12,12 @@ type command =
   | Test
   | Practice_wrongs
   | Test_wrongs
+  | Practice_starred
+  | Test_starred
   | Terms
   | Defs
-  | Text of string
+  | Add_card
+  | Text of string 
 
 (** Raised when an empty command is parsed. *)
 exception Empty 
