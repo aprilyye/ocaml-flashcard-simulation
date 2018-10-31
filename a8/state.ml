@@ -79,11 +79,7 @@ let shuffle_deck deck =
                                            Random.bool ()) deck in 
     (List.rev (fst split_deck)) @ (List.rev (snd split_deck))
 
-(**[randomize st] returns a new state that is the same as [st] 
-   except with a shuffled [deck]*)
-let randomize st = 
-  let deck = shuffle_deck st.mode_deck in
-  {st with mode_deck = deck; current = Flashcard.first_card deck}
+
 
 (**[remove_option st] returns a the value of the [current] card of [st] rather
    than an [option] and fails with "no current card" if [current] is None.*)
@@ -91,6 +87,12 @@ let remove_option st =
   match current_card st with 
   | None -> failwith "no current card"
   | Some card -> card
+
+(**[randomize st] returns a new state that is the same as [st] 
+   except with a shuffled [deck]*)
+let randomize st = 
+  let deck = shuffle_deck st.mode_deck in
+  {st with mode_deck = deck; current = Flashcard.first_card deck}
 
 (**[update_score st] updates the score of [st] once the user gets 
    the [current] card correct*)
@@ -102,8 +104,8 @@ let update_score st =
   | 2 -> st.score + 2
   | _ -> st.score
 
-(**[change_attempts_of_card card deck] increments the attempts of [card] in [deck]
-   after it is attempted.*)
+(**[change_attempts_of_card card deck] increments the attempts of [card] in 
+   [deck] after it is attempted.*)
 let rec change_attempts_of_card card deck =
   match deck with
   | [] -> []

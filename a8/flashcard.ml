@@ -97,8 +97,8 @@ let rec compare_user_fuzzy user_ans fuzzy =
 
 (**[which_fuzzy card deck user_ans prompt] compares the [user_input] to the 
    [term] of [card] in [deck] if [prompt] is [definiton], and to the [definiton]
-   if [prompt] is term. Fails with "empty deck" if the deck is empty and "card not
-   in deck" if [card] is not in [deck]*)
+   if [prompt] is term. Fails with "empty deck" if the deck is empty and 
+   "card not in deck" if [card] is not in [deck]*)
 let which_fuzzy card deck user_ans prompt =
   match deck with
   | [] -> failwith ("Empty Deck")
@@ -120,8 +120,8 @@ let rec parse_line file =
     let back = String.sub line (comma+1) ((String.length line) - 
                                           (String.length front)-1) in
     let fuzzy = make_fuzzy_set back (List.rev (star_index_finder back [])) in 
-    {front = front; back = back; fuzzy = fuzzy; facing = 
-                                                  "front"; attempts = 0}::(parse_line file)
+    {front = front; back = back; fuzzy = fuzzy; 
+     facing = "front"; attempts = 0}::(parse_line file)
 
 (**[parse_csv csv] checks that [csv] is a .csv file and opens the file if it 
    is in the working directory, then parses the lines uses [parse_line]. 
