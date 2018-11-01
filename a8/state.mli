@@ -13,6 +13,7 @@ type t = {
   mode_deck: Flashcard.t;
   already_seen: Flashcard.t;
   starred: Flashcard.t;
+  typo: bool;
 }
 
 (** [init_state deck] is the initial state of the game when studying the deck

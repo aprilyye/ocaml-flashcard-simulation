@@ -18,6 +18,7 @@ type t = {
   mode_deck: Flashcard.t;
   already_seen: Flashcard.t;
   starred: Flashcard.t; 
+  typo: bool;
 }
 
 (** [init_state deck] is the initial state of the game when studying the deck
@@ -38,6 +39,7 @@ let init_state deck=
     mode_deck=deck;
     already_seen = []; 
     starred = [];
+    typo = false;
   }
 
 (* the state [st] of the current deck *)

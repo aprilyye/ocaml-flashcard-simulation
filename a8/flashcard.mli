@@ -47,7 +47,7 @@ val parse_csv: string -> t
 (**[which_fuzzy card deck user input prompt] compares the 
    [user input] to either the [term] or [definition]
    of a [notecard] depending on [prompt]*)
-val which_fuzzy: notecard -> t -> String.t -> string -> bool
+val which_fuzzy: notecard -> t -> String.t -> string -> bool -> bool
 
 (**[equals n1 n2] compares two notecards based on their [front] and [back] 
    fields*)

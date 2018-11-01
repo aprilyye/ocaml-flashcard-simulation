@@ -95,19 +95,49 @@ let rec compare_user_fuzzy user_ans fuzzy =
   | h::t -> if (contains user_ans h) = false then false 
     else (compare_user_fuzzy user_ans t)
 
+(**[count_same w1 w2] is the number of chars in w1 that match up with 
+   the char at the same index of [w2] *)
+let rec count_same (w1:string) (w2:string) index count= 
+  if index >= String.length w1 || index >= String.length w2 then count
+  else if (String.get w1 index) = (String.get w2 index) then 
+    count_same w1 w2 (index +1) (count+1)
+  else count_same w1 w2 (index +1) (count)
+
+(**[word_typo] w1 w2 is true if [w1] equals [w2] taking typos into consideration and false ow
+   if [w1] contains 70% or more of the same chars at the same index as [w2] then they are equal
+   example [word_typo "abcd" "abtd"] is true because three out of four chars are identical at the same indecies *)
+let rec word_typo (w1:string) (w2:string) = 
+  let similar = count_same w1 w2 0 0 in 
+  let longer = if (String.length w1) > (String.length w2) then (String.length w1)
+    else (String.length w2) in 
+  let percent_correct = (float_of_int similar) /. (float_of_int longer) in 
+  if (compare percent_correct (0.7)) < 0 then false else true
+
+(**[check_typos word_lst1 word_lst2] is true if each elemets in [word_lst1] equals
+   the corresponding element in [word_lst2] at the same index and false ow*)
+let rec check_typos (word_lst1:string list) (word_lst2:string list) = 
+  match word_lst1, word_lst2 with 
+  | [],[] -> true
+  | w1::t1, w2::t2 -> word_typo w1 w2 && check_typos t1 t2
+  | w1, [] -> false 
+  | [], w2 -> false
+
+
 (**[which_fuzzy card deck user_ans prompt] compares the [user_input] to the 
    [term] of [card] in [deck] if [prompt] is [definiton], and to the [definiton]
    if [prompt] is term. Fails with "empty deck" if the deck is empty and 
    "card not in deck" if [card] is not in [deck]*)
-let which_fuzzy card deck user_ans prompt =
+let which_fuzzy card deck user_ans prompt typo=
   match deck with
   | [] -> failwith ("Empty Deck")
   | deck -> if prompt = "defs" then 
-      (if (String.compare user_ans (term card deck) = 0) then true else false)
+      (if typo then check_typos (String.split_on_char ' ' user_ans) (String.split_on_char ' ' (term card deck)) else
+         (if (String.compare user_ans (term card deck) = 0) then true else false))
     else (let defn = definition card deck in
           let fuzzy = fuzzy_set card deck in
           match fuzzy with
-          | [] -> if (String.compare defn user_ans) = 0 then true else false
+          | [] -> (if typo then check_typos (String.split_on_char ' ' defn) (String.split_on_char ' ' user_ans) 
+                   else if (String.compare defn user_ans) = 0 then true else false)
           | _ -> compare_user_fuzzy user_ans fuzzy)
 
 (**[parse_line file] returns a [deck] from CSV input [file] and an empty [deck] 

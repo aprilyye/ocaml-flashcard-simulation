@@ -133,6 +133,19 @@ let rec prompt_terms () =
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); 
     prompt_terms ()
 
+let rec prompt_typo () = 
+  ANSITerminal.(print_string [red] "\nDo you want to allow typos?"); 
+  print_string "\n[yt] yes typos\n[nt] no typos\n";
+  let cmd = user_input() in 
+  match cmd with 
+  | Typo b -> ANSITerminal.erase ANSITerminal.Above; b
+  | Quit -> ANSITerminal.erase ANSITerminal.Above; 
+    (ANSITerminal.(print_string [red] 
+                     "\nHope you feel more prepared after studying, you got this!\n");
+     print_endline "\n"; Pervasives.exit 0) 
+  | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); 
+    prompt_typo ()
+
 (**[choose_mode st] prompts the user to select one of
    five modes and proceeds with taht mode *)
 let rec choose_mode st =
@@ -229,7 +242,7 @@ and next_turn_test st mode =
   | Text t -> ANSITerminal.erase ANSITerminal.Above;
     ( let deck = st.mode_deck in 
       let is_correct_ans = 
-        Flashcard.which_fuzzy (remove_option st) deck t st.prompt in 
+        Flashcard.which_fuzzy (remove_option st) deck t st.prompt st.typo in 
       if is_correct_ans 
       then ((ANSITerminal.(print_string [green] ("\nCorrect!\n")));
             ( 
@@ -266,11 +279,12 @@ and next_turn_test st mode =
 and start_test_mode st mode = 
   let rand = prompt_shuffle () in 
   let terms = prompt_terms () in 
+  let typo = prompt_typo () in 
   match rand with 
   | true -> ANSITerminal.erase ANSITerminal.Above;
     let st = (if terms = true 
-              then {st with current_face = "terms"; prompt = "terms"} else 
-                {st with current_face = "defs"; prompt = "defs" }) in 
+              then {st with current_face = "terms"; prompt = "terms"; typo = typo} else 
+                {st with current_face = "defs"; prompt = "defs"; typo = typo }) in 
     (let rand_state = State.randomize st in 
      let deck = rand_state.mode_deck in 
      match  Flashcard.first_card deck with 
@@ -282,8 +296,8 @@ and start_test_mode st mode =
        next_turn_test rand_state mode)
   | false -> ANSITerminal.erase ANSITerminal.Above;
     let st = (if terms = true 
-              then {st with current_face = "terms"; prompt = "terms"} else 
-                {st with current_face = "defs"; prompt = "defs" }) in 
+              then {st with current_face = "terms"; prompt = "terms"; typo = typo} else 
+                {st with current_face = "defs"; prompt = "defs"; typo = typo }) in 
     (let deck = st.mode_deck in 
      match  Flashcard.first_card deck with 
      | None -> ANSITerminal.(print_string [red] 

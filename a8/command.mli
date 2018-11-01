@@ -17,6 +17,7 @@ type command =
   | Terms
   | Defs
   | Add_card
+  | Typo of bool 
   | Text of string 
 
 (** Raised when an empty command is parsed. *)

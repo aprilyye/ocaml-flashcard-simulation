@@ -17,6 +17,7 @@ type command =
   | Terms
   | Defs
   | Add_card
+  | Typo of bool
   | Text of string 
 
 exception Empty 
@@ -59,4 +60,6 @@ let parse str =
       else if h = "star" then Star
       else if h = "unstar" then Unstar
       else if h = "ac" then Add_card
+      else if h = "yt" then Typo true 
+      else if h = "nt" then Typo false
       else raise Malformed
