@@ -18,6 +18,7 @@ type command =
   | Defs
   | Add_card
   | Text of string 
+  | Reset 
 
 exception Empty 
 
@@ -59,4 +60,5 @@ let parse str =
       else if h = "star" then Star
       else if h = "unstar" then Unstar
       else if h = "ac" then Add_card
+      else if h = "reset" then Reset 
       else raise Malformed

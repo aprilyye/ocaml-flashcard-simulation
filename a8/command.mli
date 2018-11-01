@@ -18,6 +18,7 @@ type command =
   | Defs
   | Add_card
   | Text of string 
+  | Reset 
 
 (** Raised when an empty command is parsed. *)
 exception Empty 
