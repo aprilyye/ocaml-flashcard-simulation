@@ -87,14 +87,6 @@ let contains s1 s2 =
     true
   with Not_found -> false
 
-(**[compare_user_fuzzy user_ans] checks if the [user_ans] string contains 
-   each word in the [fuzzy] set, or required words of the current card. *)
-let rec compare_user_fuzzy user_ans fuzzy =
-  match fuzzy with
-  | [] -> true
-  | h::t -> if (contains user_ans h) = false then false 
-    else (compare_user_fuzzy user_ans t)
-
 (**[count_same w1 w2] is the number of chars in w1 that match up with 
    the char at the same index of [w2] *)
 let rec count_same (w1:string) (w2:string) index count= 
@@ -113,7 +105,7 @@ let rec word_typo (w1:string) (w2:string) =
   let percent_correct = (float_of_int similar) /. (float_of_int longer) in 
   if (compare percent_correct (0.7)) < 0 then false else true
 
-(**[check_typos word_lst1 word_lst2] is true if each elemets in [word_lst1] equals
+(**[check_typos word_lst1 word_lst2] is true if each elements in [word_lst1] equals
    the corresponding element in [word_lst2] at the same index and false ow*)
 let rec check_typos (word_lst1:string list) (word_lst2:string list) = 
   match word_lst1, word_lst2 with 
@@ -121,6 +113,21 @@ let rec check_typos (word_lst1:string list) (word_lst2:string list) =
   | w1::t1, w2::t2 -> word_typo w1 w2 && check_typos t1 t2
   | w1, [] -> false 
   | [], w2 -> false
+
+
+(**[compare_user_fuzzy user_ans typo] checks if the [user_ans] string contains 
+   each word in the [fuzzy] set, or required words of the current card; 
+   if typos are allowed, then the answer is accepted if each word in the 
+   user input is simlar enough to each word in the fuzzy set.*)
+let rec compare_user_fuzzy user_ans fuzzy typo =
+  if typo then ( let user_words = (String.split_on_char ' ' user_ans) 
+                 in check_typos user_words fuzzy
+               )
+  else(
+    match fuzzy with
+    | [] -> true
+    | h::t -> if (contains user_ans h) = false then false 
+      else (compare_user_fuzzy user_ans t false))
 
 
 (**[which_fuzzy card deck user_ans prompt] compares the [user_input] to the 
@@ -138,7 +145,7 @@ let which_fuzzy card deck user_ans prompt typo=
           match fuzzy with
           | [] -> (if typo then check_typos (String.split_on_char ' ' defn) (String.split_on_char ' ' user_ans) 
                    else if (String.compare defn user_ans) = 0 then true else false)
-          | _ -> compare_user_fuzzy user_ans fuzzy)
+          | _ -> compare_user_fuzzy user_ans fuzzy typo)
 
 (**[parse_line file] returns a [deck] from CSV input [file] and an empty [deck] 
    if the file is empty*)
