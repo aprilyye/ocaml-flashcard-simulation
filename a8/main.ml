@@ -259,7 +259,7 @@ and next_turn_test st mode =
                             already_seen = (remove_option st::st.already_seen)} 
         in next_turn_test next mode )
   |Reset -> ANSITerminal.erase ANSITerminal.Above; choose_mode st
-  | _ -> print_string"here"; ANSITerminal.erase ANSITerminal.Above;unknown_user_input (); 
+  | _ -> ANSITerminal.erase ANSITerminal.Above;unknown_user_input (); 
     next_turn_test st mode 
 
 
