@@ -19,6 +19,7 @@ type command =
   | Add_card
   | Typo of bool
   | Text of string 
+  | Reset 
 
 exception Empty 
 
@@ -62,4 +63,5 @@ let parse str =
       else if h = "ac" then Add_card
       else if h = "yt" then Typo true 
       else if h = "nt" then Typo false
+      else if h = "reset" then Reset 
       else raise Malformed

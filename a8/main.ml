@@ -85,6 +85,7 @@ let rec user_input_test () =
       | exception exn -> Text cmd
       | Quit -> Quit
       | Next -> Next
+      | Reset -> Reset 
       | _ -> unknown_user_input (); user_input_test ())
 
 let user_input_text () = 
@@ -270,6 +271,7 @@ and next_turn_test st mode =
         let next = {st with incorrect = new_incorrect; 
                             already_seen = (remove_option st::st.already_seen)} 
         in next_turn_test next mode )
+  |Reset -> ANSITerminal.erase ANSITerminal.Above; choose_mode st
   | _ -> ANSITerminal.erase ANSITerminal.Above;unknown_user_input (); 
     next_turn_test st mode 
 
@@ -338,10 +340,12 @@ and next_turn_practice st mode =
   | Star -> let new_starred = State.star_card st in 
     print_string "starred please carry on";
     (next_turn_practice ({st with starred = new_starred}) mode)
-  | Unstar -> let new_starred = State.unstar_card st in 
-    print_string "unstarred please carry on";
-    (next_turn_practice ({st with starred = new_starred}) mode)
+  | Unstar -> (let new_starred = State.unstar_card st in 
+               print_string "unstarred please carry on";
+               (next_turn_practice ({st with starred = new_starred}) mode))
+  | Reset -> ANSITerminal.erase ANSITerminal.Above;choose_mode st
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); next_turn_practice st mode
+
 
 (**[start_practice_mode state] starts the game with a shuffled or ordered 
    [deck] depending on user input and prints the [front] of the 

@@ -19,6 +19,7 @@ type command =
   | Add_card
   | Typo of bool 
   | Text of string 
+  | Reset 
 
 (** Raised when an empty command is parsed. *)
 exception Empty 
