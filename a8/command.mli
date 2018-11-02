@@ -16,6 +16,7 @@ type command =
   | Test_starred
   | Terms
   | Defs
+  | Back
   | Add_card
   | Typo of bool 
   | Text of string 

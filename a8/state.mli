@@ -31,6 +31,10 @@ val current_card: t-> Flashcard.notecard option
    to the next card in the deck *) 
 val next: t -> t
 
+(**[prev st] returns the [state] where the prev card field has been updated
+   to the prev card in the deck *) 
+val prev: t -> t
+
 (**[shuffle_deck deck] returns a [deck] with its [notecards] in a random order*)
 val shuffle_deck: Flashcard.t -> Flashcard.t
 

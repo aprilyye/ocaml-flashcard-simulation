@@ -47,7 +47,7 @@ let current_card st =
   st.current
 
 (**[find_next_card deck current] returns a [card] [option] representing 
-   theh next card after [current] in [deck], and [None] if [current] is the 
+   the next card after [current] in [deck], and [None] if [current] is the 
    last card in [deck] *)
 let rec find_next_card deck current = 
   match deck with 
@@ -69,6 +69,24 @@ let next st  =
       | h::t -> if h = curr && List.length t = 1 then 
           {st with current = Some (List.hd t)} else {st with current = None} )
 
+let rec find_prev_card deck current = 
+  match deck with 
+  | [] -> None
+  | h::n::t -> if n = current then Some h else find_prev_card (n::t) current
+  | h::t -> if List.length t = 1 && (List.hd t) = current then Some h else None
+
+let prev st = 
+  let deck = st.mode_deck in
+  match current_card st with
+  | None -> {st with current = None}
+  | Some curr -> 
+    ( match deck with
+      | [] -> {st with current = None}
+      | h::n::t -> if n = curr then {st with current = Some h}
+        else let m = find_prev_card (n::t) curr in {st with current = m}
+      | h::t -> if List.length t = 1 && List.hd t = curr then
+          {st with current = Some h} else {st with current = None})
+
 (**[shuffle_deck deck] returns a [deck] with its [notecards] in a random order*)
 let shuffle_deck deck =
   match deck with
@@ -76,8 +94,6 @@ let shuffle_deck deck =
   | d -> let split_deck = List.partition (fun x -> Random.self_init (); 
                                            Random.bool ()) deck in 
     (List.rev (fst split_deck)) @ (List.rev (snd split_deck))
-
-
 
 (**[remove_option st] returns a the value of the [current] card of [st] rather
    than an [option] and fails with "no current card" if [current] is None.*)
@@ -131,7 +147,6 @@ let in_correct_pile st =
   match st.current with 
   | None -> failwith "no current card"
   | Some card -> if Flashcard.mem card st.correct then true else false
-
 
 (**[star_card st] is a new deck of starred cards with the current card added to it
    if the current card is already starred then the unchanged starred deck is returned *)

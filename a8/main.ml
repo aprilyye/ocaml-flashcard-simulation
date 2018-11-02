@@ -148,7 +148,7 @@ let rec prompt_typo () =
     prompt_typo ()
 
 (**[choose_mode st] prompts the user to select one of
-   five modes and proceeds with taht mode *)
+   five modes and proceeds with that mode *)
 let rec choose_mode st =
   ANSITerminal.(print_string [red] "\nWhat do you want to do next?");
   print_string "\n[p] practice all\n[pw] practice wrongs\n[ps] practice starred\n[t] test all\n[tw] test wrongs\n[ts] test starred\n[ac] add card\n[quit]\n";
@@ -344,6 +344,17 @@ and next_turn_practice st mode =
                print_string "unstarred please carry on";
                (next_turn_practice ({st with starred = new_starred}) mode))
   | Reset -> ANSITerminal.erase ANSITerminal.Above;choose_mode st
+  | Back -> ANSITerminal.erase ANSITerminal.Above;
+    (
+      let prev = State.prev st in 
+      let prev = {prev with current_face = prev.prompt} in 
+      match State.current_card prev with
+      | None -> choose_mode st
+      | Some p -> if prev.prompt = "terms"
+        then (print_terms prev; next_turn_practice prev mode)
+        else 
+          print_defs prev; next_turn_practice prev mode
+    )
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); next_turn_practice st mode
 
 

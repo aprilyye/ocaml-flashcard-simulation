@@ -16,6 +16,7 @@ type command =
   | Test_starred
   | Terms
   | Defs
+  | Back
   | Add_card
   | Typo of bool
   | Text of string 
@@ -64,4 +65,5 @@ let parse str =
       else if h = "yt" then Typo true 
       else if h = "nt" then Typo false
       else if h = "reset" then Reset 
+      else if h = "back" then Back
       else raise Malformed
