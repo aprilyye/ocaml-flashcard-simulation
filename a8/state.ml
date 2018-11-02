@@ -8,8 +8,6 @@ type t = {
   deck: Flashcard.t;
   current: notecard option;
   current_face: string;
-  thumbs_up: Flashcard.t;
-  thumbs_down: Flashcard.t;
   score: int;
   high_score: int;
   prompt: string;
@@ -29,8 +27,6 @@ let init_state deck=
     deck=deck; 
     current= first_card deck;
     current_face = "terms";
-    thumbs_up=[]; 
-    thumbs_down=[]; 
     score = 0;
     high_score = 0;
     correct=[]; 

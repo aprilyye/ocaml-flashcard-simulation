@@ -3,8 +3,6 @@ type t = {
   deck: Flashcard.t;
   current: Flashcard.notecard option;
   current_face: string;
-  thumbs_up: Flashcard.t;
-  thumbs_down: Flashcard.t;
   score: int;
   high_score: int;
   prompt: string;

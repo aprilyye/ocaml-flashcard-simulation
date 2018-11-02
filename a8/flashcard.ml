@@ -115,20 +115,25 @@ let rec check_typos (word_lst1:string list) (word_lst2:string list) =
   | [], w2 -> false
 
 
+let rec compare_user_fuzzy_yt user_ans fuzzy = 
+  match fuzzy, user_ans with 
+  |[], _ -> true
+  |h::t, h1::t1 -> if word_typo h h1 then compare_user_fuzzy_yt t1 t else false
+  | _ -> false 
+
+let rec compare_user_fuzzy_nt user_ans fuzzy =
+  match fuzzy with
+  | [] -> true
+  | h::t -> if (contains user_ans h) = false then false else 
+      (compare_user_fuzzy_nt user_ans t)
+
 (**[compare_user_fuzzy user_ans typo] checks if the [user_ans] string contains 
    each word in the [fuzzy] set, or required words of the current card; 
    if typos are allowed, then the answer is accepted if each word in the 
    user input is simlar enough to each word in the fuzzy set.*)
-let rec compare_user_fuzzy user_ans fuzzy typo =
-  if typo then ( let user_words = (String.split_on_char ' ' user_ans) 
-                 in check_typos user_words fuzzy
-               )
-  else(
-    match fuzzy with
-    | [] -> true
-    | h::t -> if (contains user_ans h) = false then false 
-      else (compare_user_fuzzy user_ans t false))
-
+let compare_user_fuzzy user_ans fuzzy typo = 
+  if typo then compare_user_fuzzy_yt (String.split_on_char ' 'user_ans) fuzzy
+  else compare_user_fuzzy_nt user_ans fuzzy 
 
 (**[which_fuzzy card deck user_ans prompt] compares the [user_input] to the 
    [term] of [card] in [deck] if [prompt] is [definiton], and to the [definiton]
