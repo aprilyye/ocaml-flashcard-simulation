@@ -69,12 +69,17 @@ let next st  =
       | h::t -> if h = curr && List.length t = 1 then 
           {st with current = Some (List.hd t)} else {st with current = None} )
 
+(**[find_prev_card deck current] returns a [card] [option] representing 
+   the previous card before [current] in [deck], and [None] if [current] is the 
+   first card in [deck] *)
 let rec find_prev_card deck current = 
   match deck with 
   | [] -> None
   | h::n::t -> if n = current then Some h else find_prev_card (n::t) current
   | h::t -> if List.length t = 1 && (List.hd t) = current then Some h else None
 
+(**[prev st] returns the [state] where the current card field has been updated
+   to the previous card in the deck *) 
 let prev st = 
   let deck = st.mode_deck in
   match current_card st with
