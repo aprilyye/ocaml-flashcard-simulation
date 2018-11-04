@@ -197,11 +197,12 @@ and next_turn_test st mode =
                            ^ (string_of_int st.score) ^
                            ". This is not a high score.\n"));
           print_endline "\n"; Pervasives.exit 0)
-  | Next -> ANSITerminal.erase ANSITerminal.Above;
+  | Next ->
     let got_correct = in_correct_pile st in
     let card_no_option = remove_option st in 
     let already_seen = Flashcard.mem card_no_option st.already_seen in 
-    let _ =  if got_correct then () else if already_seen then () else 
+    let _ =  if got_correct then (ANSITerminal.erase ANSITerminal.Above)
+        else if already_seen then (ANSITerminal.erase ANSITerminal.Above) else 
         let correct_ans = if st.prompt = "terms" then card_no_option.back else
             card_no_option.front in if st.prompt = "defs" then 
           (ANSITerminal.(print_string [white;on_black] 
@@ -240,12 +241,13 @@ and next_turn_test st mode =
      | Some card -> if next.prompt = "terms" then 
          (print_terms next ; next_turn_test next mode) else 
          print_defs next; next_turn_test next mode)
-  | Text t -> ANSITerminal.erase ANSITerminal.Above;
+  | Text t -> 
     ( let deck = st.mode_deck in 
       let is_correct_ans = 
         Flashcard.which_fuzzy (remove_option st) deck t st.prompt st.typo in 
       if is_correct_ans 
-      then ((ANSITerminal.(print_string [green] ("\nCorrect!\n")));
+      then (ANSITerminal.erase ANSITerminal.Above;
+      (ANSITerminal.(print_string [green] ("\nCorrect!\n")));
             ( 
               let new_correct = st.correct @ [remove_option st] in 
               let new_incorrect = 
@@ -338,10 +340,10 @@ and next_turn_practice st mode =
        else 
          print_defs next; next_turn_practice next mode)
   | Star -> let new_starred = State.star_card st in 
-    print_string "starred please carry on";
+    ANSITerminal.(print_string [red] "Card starred \n");
     (next_turn_practice ({st with starred = new_starred}) mode)
   | Unstar -> (let new_starred = State.unstar_card st in 
-               print_string "unstarred please carry on";
+               ANSITerminal.(print_string [red] "Card unstarred \n");
                (next_turn_practice ({st with starred = new_starred}) mode))
   | Reset -> ANSITerminal.erase ANSITerminal.Above;choose_mode st
   | Back -> ANSITerminal.erase ANSITerminal.Above;
@@ -404,11 +406,15 @@ let rec start_study deck =
   | Test ->  ANSITerminal.erase ANSITerminal.Above; 
     let st = State.init_state deck in start_test_mode st "t"
   | Add_card -> let new_card = make_card () in
+  (ANSITerminal.(print_string [red]
+                                "\nWhat would you like to do next?"));
     print_string "\n[p] practice\n[t] test\n[ac] add card\n";
     start_study (if Flashcard.mem new_card deck then deck
                  else deck @ [new_card])
-  | _ -> ANSITerminal.erase ANSITerminal.Above ; 
-    unknown_user_input (); start_study deck
+  | _ -> (unknown_user_input (); (ANSITerminal.(print_string [red]
+    "\nWhat would you like to do next?"));
+    print_string "\n[p] practice\n[t] test\n[ac] add card\n";
+    start_study deck)
 
 (**[main_helper file_input] will continuously prompt the user to enter a valid
    csv if the user inputs an invalid csv. Otherwise, if the user inputs a valid
@@ -424,7 +430,7 @@ let rec main_helper file_input =
        print_string  "> ";
        main_helper (read_line ())
      | deck -> (ANSITerminal.(print_string [red]
-                                "\nWhat mode would you like to study in?"));
+                                "\nWhat would you like to do?"));
        print_string "\n[p] practice\n[t] test\n[ac] add card\n";
        start_study deck)
 

@@ -46,8 +46,8 @@ let parse str =
     let word_lst_no_space = remove_space word_lst in 
     match word_lst_no_space with
     | [] -> raise Malformed
-    | h::t -> if h = "next" then Next
-      else if h = "flip" then Flip
+    | h::t -> if h = "next" || h = "n" then Next
+      else if h = "flip" || h = "f" then Flip
       else if h = "quit" then Quit
       else if h = "p" then Practice
       else if h = "t" then Test
@@ -55,8 +55,8 @@ let parse str =
       else if h = "tw" then Test_wrongs
       else if h = "ps" then Practice_starred
       else if h = "ts" then Test_starred
-      else if h = "yes" then Random 
-      else if h = "no" then Ordered 
+      else if h = "yes" || h = "y" then Random 
+      else if h = "no"|| h = "n" then Ordered 
       else if h = "terms" then Terms
       else if h = "defs" then Defs
       else if h = "star" then Star
@@ -64,6 +64,6 @@ let parse str =
       else if h = "ac" then Add_card
       else if h = "yt" then Typo true 
       else if h = "nt" then Typo false
-      else if h = "reset" then Reset 
-      else if h = "back" then Back
+      else if h = "menu" then Reset 
+      else if h = "back" || h = "b" then Back
       else raise Malformed
