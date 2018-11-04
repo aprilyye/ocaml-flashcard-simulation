@@ -21,6 +21,7 @@ type command =
   | Typo of bool
   | Text of string 
   | Reset 
+  | Stats
 
 exception Empty 
 
@@ -66,4 +67,5 @@ let parse str =
       else if h = "nt" then Typo false
       else if h = "menu" then Reset 
       else if h = "back" || h = "b" then Back
+      else if h = "stats" then Stats
       else raise Malformed

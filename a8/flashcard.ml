@@ -194,3 +194,10 @@ let rec mem card deck =
   match deck with 
   | [] -> false
   | h::t -> if equals card h then true else mem card t 
+
+
+let rec find_card_opt deck card = 
+  match deck with 
+  | [] -> None
+  | h::t -> if equals card h then Some h else find_card_opt t card
+

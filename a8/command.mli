@@ -21,6 +21,7 @@ type command =
   | Typo of bool 
   | Text of string 
   | Reset 
+  | Stats
 
 (** Raised when an empty command is parsed. *)
 exception Empty 

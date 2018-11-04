@@ -65,3 +65,5 @@ val in_correct_pile: t -> bool
 val star_card: t-> Flashcard.t
 
 val unstar_card: t-> Flashcard.t
+
+val update_attempts: t -> t

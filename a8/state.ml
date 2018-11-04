@@ -162,3 +162,14 @@ let unstar_card st =
   let cur_card = remove_option st in 
   let already_in = Flashcard.mem cur_card st.starred in 
   if already_in then Flashcard.remove cur_card st.starred else st.starred
+
+let update_attempts st = 
+let rec update_state lst = 
+match lst with 
+| [] -> []
+| h::t -> (match (find_card_opt st.incorrect h) with 
+           | None -> h::(update_state t)
+           | Some card -> let sum = card.attempts in 
+                          {h with attempts = sum}::(update_state t))
+in let new_deck = update_state st.deck in 
+{st with deck = new_deck}

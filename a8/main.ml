@@ -62,6 +62,36 @@ let print_defs st =
     ANSITerminal.(print_string [black;on_white] ("\n \n"));
     print_stars_bolded definition
 
+let rec pp_list lst deck = 
+match lst with 
+| [] -> ()
+| h::t -> if deck then 
+let attempts = h.attempts in 
+ANSITerminal.(print_string [red] ("\nWrong attempts: " ^string_of_int attempts));
+else (); 
+ANSITerminal.(print_string [white;on_black] ("\n" ^ h.front^"\n"));
+ANSITerminal.(print_string [black;on_white] ("\n"));
+print_stars_bolded h.back; pp_list t deck
+
+let print_stats st = 
+ANSITerminal.erase ANSITerminal.Above;
+ANSITerminal.(print_string [Bold] "-------------------------------------------------------------------------------\n");
+ANSITerminal.(print_string [Bold] ("DECK\n"));
+pp_list st.deck true;
+ANSITerminal.(print_string [Bold] ("\n\nINCORRECT\n"));
+if (List.length st.incorrect) = 0 then print_string "None\n" else
+(let incorr = (List.length st.incorrect) in let total = (List.length st.deck) in 
+ANSITerminal.(print_string [red] (string_of_int (incorr*100/total)^"% incorrect\n"));
+pp_list st.incorrect false);
+ANSITerminal.(print_string [Bold] ("\n\nSTARRED\n"));
+if (List.length st.starred) = 0 then print_string "None\n" else 
+(let star = (List.length st.starred) in let total = (List.length st.deck) in 
+ANSITerminal.(print_string [red] (string_of_int (star*100/total) ^"% starred\n"));
+pp_list st.starred false);
+ANSITerminal.(print_string [Bold] "-------------------------------------------------------------------------------\n")
+
+
+
 (**[user_input] reads user input and parses the commands using [Command.parse]; 
    if the input is not a [command], an exception calls [unknown_user_input].
    This user_input is used for every command*)
@@ -147,11 +177,14 @@ let rec prompt_typo () =
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); 
     prompt_typo ()
 
+
+
 (**[choose_mode st] prompts the user to select one of
    five modes and proceeds with that mode *)
 let rec choose_mode st =
+  (* let st = update_attempts st in  *)
   ANSITerminal.(print_string [red] "\nWhat do you want to do next?");
-  print_string "\n[p] practice all\n[pw] practice wrongs\n[ps] practice starred\n[t] test all\n[tw] test wrongs\n[ts] test starred\n[ac] add card\n[quit]\n";
+  print_string "\n[p] practice all\n[pw] practice wrongs\n[ps] practice starred\n[t] test all\n[tw] test wrongs\n[ts] test starred\n[ac] add card\n[stats]\n[quit]\n";
   let cmd = user_input () in 
   match cmd with 
   | Quit -> ANSITerminal.erase ANSITerminal.Above; 
@@ -176,6 +209,7 @@ let rec choose_mode st =
   | Test_starred -> start_test_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
   | Add_card -> let new_card = make_card () in choose_mode ({st with deck = (if Flashcard.mem new_card st.deck then st.deck
                                                                              else st.deck @ [new_card])})
+  | Stats -> print_stats st; choose_mode st                                                                     
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); choose_mode st
 
 
@@ -202,7 +236,7 @@ and next_turn_test st mode =
     let card_no_option = remove_option st in 
     let already_seen = Flashcard.mem card_no_option st.already_seen in 
     let _ =  if got_correct then (ANSITerminal.erase ANSITerminal.Above)
-        else if already_seen then (ANSITerminal.erase ANSITerminal.Above) else 
+        else if already_seen then (ANSITerminal.erase ANSITerminal.Above) else
         let correct_ans = if st.prompt = "terms" then card_no_option.back else
             card_no_option.front in if st.prompt = "defs" then 
           (ANSITerminal.(print_string [white;on_black] 
@@ -217,7 +251,7 @@ and next_turn_test st mode =
        then {next with 
              current_face = next.prompt; 
              already_seen = (remove_option st::st.already_seen)} 
-       else {next with current_face = next.prompt; 
+       else if already_seen then next else {next with current_face = next.prompt; 
                        already_seen = (remove_option st::st.already_seen); 
                        incorrect = if 
                          Flashcard.mem card_no_option next.incorrect 
@@ -226,6 +260,7 @@ and next_turn_test st mode =
                            (next.incorrect @ 
                             [{card_no_option with attempts = 
                                                     card_no_option.attempts +1; }])} in 
+     let next = update_attempts next in 
      match State.current_card next with 
      | None -> let is_high = st.score > st.high_score in 
        if is_high then 
@@ -255,10 +290,12 @@ and next_turn_test st mode =
               let next = {st with score = (update_score st); 
                                   correct = new_correct; 
                                   incorrect = new_incorrect } in
+              let next = update_attempts next in
               next_turn_test next mode))
       else 
         let correct_ans = if st.prompt = "terms" then (remove_option st).back else
             (remove_option st).front in 
+        ANSITerminal.(print_string [red] "\n\nIncorrect");
         if st.prompt = "defs" then 
           (ANSITerminal.(print_string [white;on_black] 
                            ("\n \nCorrect answer: " ^ correct_ans^ "\n")); print_string "\n")
@@ -272,6 +309,7 @@ and next_turn_test st mode =
                                 attempts = (remove_option st).attempts+1}] in
         let next = {st with incorrect = new_incorrect; 
                             already_seen = (remove_option st::st.already_seen)} 
+        in let next = update_attempts next 
         in next_turn_test next mode )
   |Reset -> ANSITerminal.erase ANSITerminal.Above; choose_mode st
   | _ -> ANSITerminal.erase ANSITerminal.Above;unknown_user_input (); 
