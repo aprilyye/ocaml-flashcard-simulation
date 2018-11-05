@@ -111,9 +111,6 @@ let flashcard_tests =
         assert_equal (which_fuzzy semantics_card deck_3110 "evalauted" "terms" true) true);
     "Flashcard test 17" >:: (fun _ -> 
         assert_equal (which_fuzzy semantics_card deck_3110 "synxat" "defs" true) false); 
-    "Flashcard test 18" >:: (fun _ -> 
-        assert_equal (which_fuzzy semantics_card deck_3110 "evalauted sdfds dsfd" "terms" true) true);
-
   ] 
 
 (* variables to test Command.remove_space *)
@@ -137,6 +134,8 @@ let command_tests =
         assert_equal (parse "     yes") Random);
     "Command test 5" >:: (fun _ -> 
         assert_equal (parse "p") Practice);
+    "Command test 6" >:: (fun _ -> 
+        assert_equal (parse "back    ") Back);
   ]
 
 (* initialized state with deck_3110 *)
@@ -280,6 +279,8 @@ let state_tests =
         assert_equal (star_card state_3110) [first_card_3110]);
     "State test 15" >:: (fun _ -> 
         assert_equal (unstar_card state_3110_starred_pile) []);
+    "State test 16" >:: (fun _ -> 
+        assert_equal (prev state_3110_next) state_3110);  
   ] 
 
 let suite =
