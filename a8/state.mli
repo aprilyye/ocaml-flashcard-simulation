@@ -62,10 +62,20 @@ val get_face: t -> string
    pile and false otherwise*)
 val in_correct_pile: t -> bool
 
+(**[star_card st] is a new deck of starred cards with the current card added to it
+   if the current card is already starred then the unchanged starred deck is returned *)
 val star_card: t-> Flashcard.t
 
+(**[unstar_card st] is a new deck of starred cards with the current card removed from it
+   if the current card is not starred then the unchanged starred deck is returned *)
 val unstar_card: t-> Flashcard.t
 
+(** [updated_attempts st] adjusts the # wrong attempts for each card in 
+    [st.deck] to match the # wrong attempts for each card in [st.incorrect]. *)
 val update_attempts: t -> t
 
+(**[write_csv st] prints a summary of stats about [st] to a csv file called
+    summary.csv.This includes the list of cards in [st.deck], [st.incorrect], 
+    and [st.starred], as well as the % incorrect and % starred. 
+    Requires: a file name summary.csv exists in the working directory. *) 
 val write_csv: t -> unit

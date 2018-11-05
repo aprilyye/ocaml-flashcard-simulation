@@ -168,8 +168,8 @@ let unstar_card st =
   let already_in = Flashcard.mem cur_card st.starred in 
   if already_in then Flashcard.remove cur_card st.starred else st.starred
 
-
-
+(** [updated_attempts st] adjusts the # wrong attempts for each card in 
+    [st.deck] to match the # wrong attempts for each card in [st.incorrect]. *)
 let update_attempts st = 
   let rec update_state lst = 
     match lst with 
@@ -181,6 +181,8 @@ let update_attempts st =
   in let new_deck = update_state st.deck in 
   {st with deck = new_deck}
 
+(**[pretty_write_list lst deck f] pretty-writes [lst] to [f]. If [deck] is true, 
+    then # of times wrong is also written to [f]. *)
 let rec pretty_write_list lst deck f =
   match lst with 
   |[] -> ()
@@ -191,6 +193,10 @@ let rec pretty_write_list lst deck f =
       output_string f (h.front^","^h.back^"\n"); 
     pretty_write_list t deck f
 
+(**[write_csv st] prints a summary of stats about [st] to a csv file called
+    summary.csv.This includes the list of cards in [st.deck], [st.incorrect], 
+    and [st.starred], as well as the % incorrect and % starred. 
+    Requires: a file name summary.csv exists in the working directory. *) 
 let write_csv st = 
   let file = open_out "summary.csv" in 
   output_string file "SUMMARY\n\n";

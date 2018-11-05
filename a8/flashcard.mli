@@ -65,4 +65,6 @@ val star_index_finder: string -> int list -> int list
 
 val make_fuzzy_set: string -> int list -> string list
 
+(**[find_card_opt deck card] returns [Some card] if [card] is present in [deck], 
+    and [None] otherwise.  *)
 val find_card_opt: t -> notecard -> notecard option 

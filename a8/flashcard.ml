@@ -195,7 +195,8 @@ let rec mem card deck =
   | [] -> false
   | h::t -> if equals card h then true else mem card t 
 
-
+(**[find_card_opt deck card] returns [Some card] if [card] is present in [deck], 
+    and [None] otherwise.  *)
 let rec find_card_opt deck card = 
   match deck with 
   | [] -> None

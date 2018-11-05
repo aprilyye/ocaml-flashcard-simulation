@@ -62,6 +62,8 @@ let print_defs st =
     ANSITerminal.(print_string [black;on_white] ("\n \n"));
     print_stars_bolded definition
 
+(**[pp_list lst deck] pretty-prints [lst] to the terminal. If [deck] is true, 
+    then # of times wrong is also printed. *)
 let rec pp_list lst deck = 
   match lst with 
   | [] -> ()
@@ -73,6 +75,9 @@ let rec pp_list lst deck =
     ANSITerminal.(print_string [black;on_white] ("\n"));
     print_stars_bolded h.back; pp_list t deck
 
+(** [print_stats st] prints a summary of stats about [st] to the terminal. 
+    This includes the list of cards in [st.deck], [st.incorrect], and [st.starred],
+    as well as the % incorrect and % starred. *)
 let print_stats st = 
   ANSITerminal.erase ANSITerminal.Above;
   ANSITerminal.(print_string [Bold] "-------------------------------------------------------------------------------\n");
@@ -89,7 +94,6 @@ let print_stats st =
      ANSITerminal.(print_string [red] (string_of_int (star*100/total) ^"% starred\n"));
      pp_list st.starred false);
   ANSITerminal.(print_string [Bold] "-------------------------------------------------------------------------------\n")
-
 
 
 (**[user_input] reads user input and parses the commands using [Command.parse]; 
@@ -150,6 +154,8 @@ let make_card ()  =
   {front = front; back = back; fuzzy = fuzzy; facing = 
                                                 "front"; attempts = 0}
 
+(**[prompt_terms ()] prompts the user to choose to be prompted with either the 
+   front or back of the notecards. *)
 let rec prompt_terms () = 
   ANSITerminal.(print_string [red] "\nDo you want to be prompted with terms or definitions?"); 
   print_string "\n[terms]\n[defs]\n";
@@ -164,6 +170,8 @@ let rec prompt_terms () =
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); 
     prompt_terms ()
 
+(**[prompt_typo ()] prompts the user to choose to allow typos in test mode, 
+   or not. *)
 let rec prompt_typo () = 
   ANSITerminal.(print_string [red] "\nDo you want to allow typos?"); 
   print_string "\n[yt] yes typos\n[nt] no typos\n";
@@ -176,8 +184,6 @@ let rec prompt_typo () =
      print_endline "\n"; Pervasives.exit 0) 
   | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); 
     prompt_typo ()
-
-
 
 (**[choose_mode st] prompts the user to select one of
    five modes and proceeds with that mode *)
@@ -204,13 +210,30 @@ let rec choose_mode st =
                              current = (Flashcard.first_card st.incorrect); 
                              already_seen=[]} "tw"
   | Test -> ANSITerminal.erase ANSITerminal.Above;
-    start_test_mode {st with mode_deck=st.deck; score = 0; correct = []; incorrect=[]; current = (Flashcard.first_card st.deck); already_seen=[]} "t"
-  | Practice_starred -> start_practice_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
-  | Test_starred -> start_test_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
-  | Add_card -> let new_card = make_card () in choose_mode ({st with deck = (if Flashcard.mem new_card st.deck then st.deck
-                                                                             else st.deck @ [new_card])})
+    start_test_mode 
+      {st  with mode_deck=st.deck; 
+                score = 0; 
+                correct = []; 
+                incorrect=[]; 
+                current = (Flashcard.first_card st.deck); 
+                already_seen=[]} "t"
+  | Practice_starred -> start_practice_mode 
+                          {st with mode_deck=st.starred; 
+                                   score = 0; 
+                                   incorrect=[]; 
+                                   current = (Flashcard.first_card st.starred); 
+                                   already_seen=[]} "ts"
+  | Test_starred -> start_test_mode 
+                      {st with mode_deck=st.starred; 
+                               score = 0; incorrect=[]; 
+                               current = (Flashcard.first_card st.starred); 
+                               already_seen=[]} "ts"
+  | Add_card -> let new_card = make_card () in 
+    choose_mode ({st with deck = (if Flashcard.mem new_card st.deck then st.deck
+                                  else st.deck @ [new_card])})
   | Stats -> print_stats st; choose_mode st                                                                     
-  | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); choose_mode st
+  | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); 
+    choose_mode st
 
 
 (**[next_turn_test st mode] executes the user's command upon testing through
@@ -251,15 +274,16 @@ and next_turn_test st mode =
        then {next with 
              current_face = next.prompt; 
              already_seen = (remove_option st::st.already_seen)} 
-       else if already_seen then next else {next with current_face = next.prompt; 
-                                                      already_seen = (remove_option st::st.already_seen); 
-                                                      incorrect = if 
-                                                        Flashcard.mem card_no_option next.incorrect 
-                                                        then change_attempts st 
-                                                        else 
-                                                          (next.incorrect @ 
-                                                           [{card_no_option with attempts = 
-                                                                                   card_no_option.attempts +1; }])} in 
+       else if already_seen then next 
+       else {next 
+             with current_face = next.prompt; 
+                  already_seen = (remove_option st::st.already_seen); 
+                  incorrect = if 
+                    Flashcard.mem card_no_option next.incorrect 
+                    then change_attempts st 
+                    else (next.incorrect @ 
+                          [{card_no_option 
+                            with attempts = card_no_option.attempts +1; }])} in 
      let next = update_attempts next in 
      match State.current_card next with 
      | None -> let is_high = st.score > st.high_score in 
@@ -298,7 +322,8 @@ and next_turn_test st mode =
         ANSITerminal.(print_string [red] "\n\nIncorrect");
         if st.prompt = "defs" then 
           (ANSITerminal.(print_string [white;on_black] 
-                           ("\n \nCorrect answer: " ^ correct_ans^ "\n")); print_string "\n")
+                           ("\n \nCorrect answer: " ^ correct_ans^ "\n")); 
+           print_string "\n")
         else 
           ((ANSITerminal.(print_string [black;on_white]
                             ("\n \nCorrect answer: "))); 
@@ -394,7 +419,8 @@ and next_turn_practice st mode =
         else 
           print_defs prev; next_turn_practice prev mode
     )
-  | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); next_turn_practice st mode
+  | _ -> ANSITerminal.erase ANSITerminal.Above; unknown_user_input (); 
+    next_turn_practice st mode
 
 
 (**[start_practice_mode state] starts the game with a shuffled or ordered 
