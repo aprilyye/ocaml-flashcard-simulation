@@ -132,7 +132,7 @@ let rec compare_user_fuzzy_nt user_ans fuzzy =
    if typos are allowed, then the answer is accepted if each word in the 
    user input is simlar enough to each word in the fuzzy set.*)
 let compare_user_fuzzy user_ans fuzzy typo = 
-  if typo then compare_user_fuzzy_yt (String.split_on_char ' 'user_ans) fuzzy
+  if typo then compare_user_fuzzy_yt (String.split_on_char ' ' user_ans) fuzzy
   else compare_user_fuzzy_nt user_ans fuzzy 
 
 (**[which_fuzzy card deck user_ans prompt] compares the [user_input] to the 

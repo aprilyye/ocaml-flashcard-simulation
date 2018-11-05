@@ -63,32 +63,32 @@ let print_defs st =
     print_stars_bolded definition
 
 let rec pp_list lst deck = 
-match lst with 
-| [] -> ()
-| h::t -> if deck then 
-let attempts = h.attempts in 
-ANSITerminal.(print_string [red] ("\nWrong attempts: " ^string_of_int attempts));
-else (); 
-ANSITerminal.(print_string [white;on_black] ("\n" ^ h.front^"\n"));
-ANSITerminal.(print_string [black;on_white] ("\n"));
-print_stars_bolded h.back; pp_list t deck
+  match lst with 
+  | [] -> ()
+  | h::t -> if deck then 
+      let attempts = h.attempts in 
+      ANSITerminal.(print_string [red] ("\nTimes wrong: " ^string_of_int attempts));
+    else (); 
+    ANSITerminal.(print_string [white;on_black] ("\n" ^ h.front^"\n"));
+    ANSITerminal.(print_string [black;on_white] ("\n"));
+    print_stars_bolded h.back; pp_list t deck
 
 let print_stats st = 
-ANSITerminal.erase ANSITerminal.Above;
-ANSITerminal.(print_string [Bold] "-------------------------------------------------------------------------------\n");
-ANSITerminal.(print_string [Bold] ("DECK\n"));
-pp_list st.deck true;
-ANSITerminal.(print_string [Bold] ("\n\nINCORRECT\n"));
-if (List.length st.incorrect) = 0 then print_string "None\n" else
-(let incorr = (List.length st.incorrect) in let total = (List.length st.deck) in 
-ANSITerminal.(print_string [red] (string_of_int (incorr*100/total)^"% incorrect\n"));
-pp_list st.incorrect false);
-ANSITerminal.(print_string [Bold] ("\n\nSTARRED\n"));
-if (List.length st.starred) = 0 then print_string "None\n" else 
-(let star = (List.length st.starred) in let total = (List.length st.deck) in 
-ANSITerminal.(print_string [red] (string_of_int (star*100/total) ^"% starred\n"));
-pp_list st.starred false);
-ANSITerminal.(print_string [Bold] "-------------------------------------------------------------------------------\n")
+  ANSITerminal.erase ANSITerminal.Above;
+  ANSITerminal.(print_string [Bold] "-------------------------------------------------------------------------------\n");
+  ANSITerminal.(print_string [Bold] ("DECK\n"));
+  pp_list st.deck true;
+  ANSITerminal.(print_string [Bold] ("\n\nINCORRECT\n"));
+  if (List.length st.incorrect) = 0 then print_string "None\n" else
+    (let incorr = (List.length st.incorrect) in let total = (List.length st.deck) in 
+     ANSITerminal.(print_string [red] (string_of_int (incorr*100/total)^"% incorrect\n"));
+     pp_list st.incorrect false);
+  ANSITerminal.(print_string [Bold] ("\n\nSTARRED\n"));
+  if (List.length st.starred) = 0 then print_string "None\n" else 
+    (let star = (List.length st.starred) in let total = (List.length st.deck) in 
+     ANSITerminal.(print_string [red] (string_of_int (star*100/total) ^"% starred\n"));
+     pp_list st.starred false);
+  ANSITerminal.(print_string [Bold] "-------------------------------------------------------------------------------\n")
 
 
 
@@ -204,7 +204,7 @@ let rec choose_mode st =
                              current = (Flashcard.first_card st.incorrect); 
                              already_seen=[]} "tw"
   | Test -> ANSITerminal.erase ANSITerminal.Above;
-    start_test_mode {st with mode_deck=st.deck; score = 0; incorrect=[]; current = (Flashcard.first_card st.deck); already_seen=[]} "t"
+    start_test_mode {st with mode_deck=st.deck; score = 0; correct = []; incorrect=[]; current = (Flashcard.first_card st.deck); already_seen=[]} "t"
   | Practice_starred -> start_practice_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
   | Test_starred -> start_test_mode {st with mode_deck=st.starred; score = 0; incorrect=[]; current = (Flashcard.first_card st.starred); already_seen=[]} "ts"
   | Add_card -> let new_card = make_card () in choose_mode ({st with deck = (if Flashcard.mem new_card st.deck then st.deck
@@ -252,14 +252,14 @@ and next_turn_test st mode =
              current_face = next.prompt; 
              already_seen = (remove_option st::st.already_seen)} 
        else if already_seen then next else {next with current_face = next.prompt; 
-                       already_seen = (remove_option st::st.already_seen); 
-                       incorrect = if 
-                         Flashcard.mem card_no_option next.incorrect 
-                         then change_attempts st 
-                         else 
-                           (next.incorrect @ 
-                            [{card_no_option with attempts = 
-                                                    card_no_option.attempts +1; }])} in 
+                                                      already_seen = (remove_option st::st.already_seen); 
+                                                      incorrect = if 
+                                                        Flashcard.mem card_no_option next.incorrect 
+                                                        then change_attempts st 
+                                                        else 
+                                                          (next.incorrect @ 
+                                                           [{card_no_option with attempts = 
+                                                                                   card_no_option.attempts +1; }])} in 
      let next = update_attempts next in 
      match State.current_card next with 
      | None -> let is_high = st.score > st.high_score in 
