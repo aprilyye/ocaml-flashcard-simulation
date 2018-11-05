@@ -115,6 +115,19 @@ let flashcard_tests =
         assert_equal (find_card_opt deck_3110 first_card_3110) first_card_3110_opt);
     "Flashcard test 19" >:: (fun _ -> 
         assert_equal (find_card_opt deck_3110 rand_card) None);
+    "Flaschard test 20" >:: (fun _ -> 
+        assert_equal 
+          (which_fuzzy semantics_card deck_3110 "how code is eavluated" "terms" true) true);
+    "Flashcard test 21" >:: (fun _ -> 
+        assert_equal 
+          (which_fuzzy semantics_card deck_3110 "evalauted other words" "terms" true) true); 
+    "Flashcard test 22" >:: (fun _ -> 
+        assert_equal 
+          (which_fuzzy semantics_card deck_3110 "how code is evaluated" "terms" false) true);
+    "Flashcard test 23" >:: (fun _ -> 
+        assert_equal 
+          (which_fuzzy semantics_card deck_3110 "evaluated other words" "terms" false) true); 
+
   ] 
 
 (* variables to test Command.remove_space *)

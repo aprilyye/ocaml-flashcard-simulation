@@ -115,11 +115,20 @@ let rec check_typos (word_lst1:string list) (word_lst2:string list) =
   | [], w2 -> false
 
 
+(*[find_typo_word w wl] finds word [w] in word list [wl] accounting for typos 
+  in [w]*)
+let rec find_typo_word w wl = 
+  match wl with 
+  | []-> false
+  | h::t -> if word_typo w h then true else find_typo_word w t
+
+(*[compare_user_fuzzy_yt user_ans fuzzy] returns true if every word/phrase in 
+  [fuzzy], accounting for typos, is present in [user_input]*)
 let rec compare_user_fuzzy_yt user_ans fuzzy = 
-  match fuzzy, user_ans with 
-  |[], _ -> true
-  |h::t, h1::t1 -> if word_typo h h1 then compare_user_fuzzy_yt t1 t else false
-  | _ -> false 
+  match fuzzy with 
+  |[]-> true
+  |h::t -> if find_typo_word h user_ans then compare_user_fuzzy_yt user_ans t 
+    else false
 
 let rec compare_user_fuzzy_nt user_ans fuzzy =
   match fuzzy with
