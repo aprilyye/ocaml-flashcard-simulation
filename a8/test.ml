@@ -110,7 +110,20 @@ let flashcard_tests =
     "Flashcard test 16" >:: (fun _ -> 
         assert_equal (which_fuzzy semantics_card deck_3110 "evalauted" "terms" true) true);
     "Flashcard test 17" >:: (fun _ -> 
-        assert_equal (which_fuzzy semantics_card deck_3110 "synxat" "defs" true) false); 
+        assert_equal (which_fuzzy semantics_card deck_3110 "synxat" "defs" true) false);
+    "Flashcard test 18" >:: (fun _ -> 
+        assert_equal 
+          (which_fuzzy semantics_card deck_3110 "how code is eavluated" "terms" true) true);
+    "Flashcard test 19" >:: (fun _ -> 
+        assert_equal 
+          (which_fuzzy semantics_card deck_3110 "evalauted other words" "terms" true) true); 
+    "Flashcard test 20" >:: (fun _ -> 
+        assert_equal 
+          (which_fuzzy semantics_card deck_3110 "how code is evaluated" "terms" false) true);
+    "Flashcard test 21" >:: (fun _ -> 
+        assert_equal 
+          (which_fuzzy semantics_card deck_3110 "evaluated other words" "terms" false) true); 
+
   ] 
 
 (* variables to test Command.remove_space *)
