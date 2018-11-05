@@ -168,13 +168,42 @@ let unstar_card st =
   let already_in = Flashcard.mem cur_card st.starred in 
   if already_in then Flashcard.remove cur_card st.starred else st.starred
 
+
+
 let update_attempts st = 
-let rec update_state lst = 
-match lst with 
-| [] -> []
-| h::t -> (match (find_card_opt st.incorrect h) with 
-           | None -> h::(update_state t)
-           | Some card -> let sum = card.attempts in 
-                          {h with attempts = sum}::(update_state t))
-in let new_deck = update_state st.deck in 
-{st with deck = new_deck}
+  let rec update_state lst = 
+    match lst with 
+    | [] -> []
+    | h::t -> (match (find_card_opt st.incorrect h) with 
+        | None -> h::(update_state t)
+        | Some card -> let sum = card.attempts in 
+          {h with attempts = sum}::(update_state t))
+  in let new_deck = update_state st.deck in 
+  {st with deck = new_deck}
+
+let rec pretty_write_list lst deck f =
+  match lst with 
+  |[] -> ()
+  |h::t -> if deck then 
+      let attempts = string_of_int h.attempts in 
+      output_string f (h.front^","^h.back^","^attempts^"\n")
+    else 
+      output_string f (h.front^","^h.back^"\n"); 
+    pretty_write_list t deck f
+
+let write_csv st = 
+  let file = open_out "summary.csv" in 
+  output_string file "SUMMARY\n\n";
+  output_string file "TERM, DEFINITION, TIMES WRONG\n";
+  pretty_write_list st.deck true file; 
+  output_string file "\nINCORRECT\n"; 
+  if (List.length st.incorrect) = 0 then output_string file "None\n" else
+    (let incorr = (List.length st.incorrect) in let total = (List.length st.deck) in
+     output_string file (string_of_int (incorr*100/total)^"% incorrect\n");
+     pretty_write_list st.incorrect false file);
+  output_string file "\nSTARRED\n"; 
+  if (List.length st.starred) = 0 then output_string file "None\n" else 
+    (let star = (List.length st.starred) in let total = (List.length st.deck) in
+     output_string file (string_of_int (star*100/total) ^"% starred\n");
+     pretty_write_list st.starred false file);
+  close_out file

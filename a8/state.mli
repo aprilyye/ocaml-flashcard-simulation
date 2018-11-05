@@ -67,3 +67,5 @@ val star_card: t-> Flashcard.t
 val unstar_card: t-> Flashcard.t
 
 val update_attempts: t -> t
+
+val write_csv: t -> unit

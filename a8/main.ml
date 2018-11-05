@@ -187,7 +187,7 @@ let rec choose_mode st =
   print_string "\n[p] practice all\n[pw] practice wrongs\n[ps] practice starred\n[t] test all\n[tw] test wrongs\n[ts] test starred\n[ac] add card\n[stats]\n[quit]\n";
   let cmd = user_input () in 
   match cmd with 
-  | Quit -> ANSITerminal.erase ANSITerminal.Above; 
+  | Quit -> State.write_csv st; ANSITerminal.erase ANSITerminal.Above; 
     (ANSITerminal.(print_string [red] 
                      "\nHope you feel more prepared after studying, you got this!\n");
      print_endline "\n"; Pervasives.exit 0)
@@ -220,7 +220,7 @@ and next_turn_test st mode =
   match cmd with 
   (*we dont update high score in quit because they are quiting so it doesnt 
     matter*)
-  | Quit -> ANSITerminal.erase ANSITerminal.Above;
+  | Quit -> write_csv st; ANSITerminal.erase ANSITerminal.Above;
     let is_high = st.score > st.high_score in 
     if is_high then (ANSITerminal.(print_string [red] 
                                      ("\n\nCongrats! New high score of " ^
@@ -356,7 +356,7 @@ and start_test_mode st mode =
 and next_turn_practice st mode = 
   let cmd = user_input () in
   match cmd with 
-  | Quit -> ANSITerminal.erase ANSITerminal.Above; 
+  | Quit -> write_csv st; ANSITerminal.erase ANSITerminal.Above; 
     (ANSITerminal.(print_string [red] 
                      "\nHope you feel more prepared after studying, you got this!\n");
      print_endline "\n"; Pervasives.exit 0)
@@ -434,7 +434,7 @@ and start_practice_mode st mode=
 let rec start_study deck =
   let cmd = user_input () in 
   match cmd with 
-  | Quit -> ANSITerminal.erase ANSITerminal.Above;
+  | Quit -> write_csv (State.init_state deck); ANSITerminal.erase ANSITerminal.Above;
     (ANSITerminal.(print_string [red] 
                      "\nHope you feel more prepared after studying, you got this!\n");
      print_endline "\n"; Pervasives.exit 0)
