@@ -110,7 +110,11 @@ let flashcard_tests =
     "Flashcard test 16" >:: (fun _ -> 
         assert_equal (which_fuzzy semantics_card deck_3110 "evalauted" "terms" true) true);
     "Flashcard test 17" >:: (fun _ -> 
-        assert_equal (which_fuzzy semantics_card deck_3110 "synxat" "defs" true) false); 
+        assert_equal (which_fuzzy semantics_card deck_3110 "synxat" "defs" true) false);
+    "Flashcard test 18" >:: (fun _ -> 
+        assert_equal (find_card_opt deck_3110 first_card_3110) first_card_3110_opt);
+    "Flashcard test 19" >:: (fun _ -> 
+        assert_equal (find_card_opt deck_3110 rand_card) None);
   ] 
 
 (* variables to test Command.remove_space *)
@@ -136,6 +140,8 @@ let command_tests =
         assert_equal (parse "p") Practice);
     "Command test 6" >:: (fun _ -> 
         assert_equal (parse "back    ") Back);
+    "Command test 7" >:: (fun _ -> 
+        assert_equal (parse "stats") Stats);
   ]
 
 (* initialized state with deck_3110 *)
@@ -186,6 +192,41 @@ let state_3110_incor_pile = {
   prompt = "terms";
   correct=[]; 
   incorrect= [first_card_3110]; 
+  mode_deck = deck_3110;
+  already_seen = []; 
+  typo = false;
+  starred = []
+}
+
+let state_3110_incor_pile_1 = {
+  deck=deck_3110; 
+  current= first_card_3110_opt;
+  current_face = "terms";
+  score = 0;
+  high_score = 0; 
+  prompt = "terms";
+  correct=[]; 
+  incorrect= [first_card_3110_1]; 
+  mode_deck = deck_3110;
+  already_seen = []; 
+  typo = false;
+  starred = []
+}
+
+let deck_3110_without_first = remove first_card_3110 deck_3110 
+
+let deck_3110_first_incorr =
+  [first_card_3110_1] @ deck_3110_without_first
+
+let state_3110_incor_pile_updated = {
+  deck=deck_3110_first_incorr; 
+  current= first_card_3110_opt;
+  current_face = "terms";
+  score = 0;
+  high_score = 0; 
+  prompt = "terms";
+  correct=[]; 
+  incorrect= [first_card_3110_1]; 
   mode_deck = deck_3110;
   already_seen = []; 
   typo = false;
@@ -280,7 +321,11 @@ let state_tests =
     "State test 15" >:: (fun _ -> 
         assert_equal (unstar_card state_3110_starred_pile) []);
     "State test 16" >:: (fun _ -> 
-        assert_equal (prev state_3110_next) state_3110);  
+        assert_equal (prev state_3110_next) state_3110);
+    "State test 17" >:: (fun _ -> 
+        assert_equal (update_attempts state_3110) state_3110);
+    "State test 18" >:: (fun _ -> 
+        assert_equal (update_attempts state_3110_incor_pile_1) state_3110_incor_pile_updated);
   ] 
 
 let suite =
