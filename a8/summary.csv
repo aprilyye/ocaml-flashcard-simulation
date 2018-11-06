@@ -4,15 +4,12 @@ TERM, DEFINITION, TIMES WRONG
 syntax,how code is written,0
 immutable,state is not changed,1
 semantics,how code is *evaluated*,0
-static semantics,*compile-time* evaluation,1
+static semantics,*compile-time* evaluation,0
 dynamic semantics,*run-time* evaluation,0
 
 INCORRECT
-40% incorrect
-static semantics,*compile-time* evaluation
+20% incorrect
 immutable,state is not changed
 
 STARRED
-40% starred
-static semantics,*compile-time* evaluation
-dynamic semantics,*run-time* evaluation
+None
