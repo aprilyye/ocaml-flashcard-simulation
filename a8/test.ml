@@ -339,6 +339,8 @@ let state_tests =
         assert_equal (update_attempts state_3110) state_3110);
     "State test 18" >:: (fun _ -> 
         assert_equal (update_attempts state_3110_incor_pile_1) state_3110_incor_pile_updated);
+    "State test 19" >:: (fun _ -> 
+        assert(let r_state = randomize state_3110 in r_state != state_3110))
   ] 
 
 let suite =
