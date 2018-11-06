@@ -304,7 +304,7 @@ and next_turn_test st mode next =
     | _ -> ANSITerminal.erase ANSITerminal.Above;unknown_user_input (); 
       next_turn_test st mode true 
 
-  else(
+  else
     let cmd = user_input_test () in
     match cmd with 
     (*we dont update high score in quit because they are quiting so it doesnt 
@@ -358,7 +358,6 @@ and next_turn_test st mode next =
           in next_turn_test next mode true)
     |Reset -> ANSITerminal.erase ANSITerminal.Above; choose_mode st
     | _ -> unknown_user_input (); next_turn_test st mode false
-  )
 
 (**[start_test_mode st mode] starts the testing mode in either randomized
    flashcard order or not*)
