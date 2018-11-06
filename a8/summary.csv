@@ -2,14 +2,13 @@ SUMMARY
 
 TERM, DEFINITION, TIMES WRONG
 syntax,how code is written,0
-immutable,state is not changed,1
-semantics,how code is *evaluated*,0
-static semantics,*compile-time* evaluation,0
+immutable,state is not changed,0
+semantics,how code is *evaluated*,1
+static semantics,*compile-time* evaluation,2
 dynamic semantics,*run-time* evaluation,0
 
 INCORRECT
-20% incorrect
-immutable,state is not changed
+None
 
 STARRED
 None

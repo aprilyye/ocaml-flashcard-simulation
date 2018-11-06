@@ -300,10 +300,8 @@ and next_turn_test st mode next =
                              ^ (string_of_int st.score) ^
                              ". This is not a high score.\n"));
             print_endline "\n"; Pervasives.exit 0)
-    |Reset -> ANSITerminal.erase ANSITerminal.Above; choose_mode st
-    | _ -> ANSITerminal.erase ANSITerminal.Above;unknown_user_input (); 
-      next_turn_test st mode true 
-
+    | Reset -> ANSITerminal.erase ANSITerminal.Above; choose_mode st
+    | _ -> unknown_user_input (); next_turn_test st mode true 
   else
     let cmd = user_input_test () in
     match cmd with 
