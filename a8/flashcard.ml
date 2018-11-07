@@ -130,6 +130,8 @@ let rec compare_user_fuzzy_yt user_ans fuzzy =
   |h::t -> if find_typo_word h user_ans then compare_user_fuzzy_yt user_ans t 
     else false
 
+(*[compare_user_fuzzy_nt user_ans fuzzy] returns true if every word/phrase in 
+  [fuzzy] is present in [user_input]*)
 let rec compare_user_fuzzy_nt user_ans fuzzy =
   match fuzzy with
   | [] -> true

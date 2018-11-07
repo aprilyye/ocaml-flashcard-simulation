@@ -63,6 +63,8 @@ val mem: notecard -> t -> bool
 (**[star_index_finder str] returns a list of the indices of * in [str]*)
 val star_index_finder: string -> int list -> int list
 
+(**[make_fuzzy_set str index_lst] returns the list of starred terms in 
+   the definition ([str]) of a card*)
 val make_fuzzy_set: string -> int list -> string list
 
 (**[find_card_opt deck card] returns [Some card] if [card] is present in [deck], 
