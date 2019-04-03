@@ -2,8 +2,9 @@
 Project submission by Ivana Terziyska (it76), April Ye (yy459), Karson Daecher (kbd45), and Oren Michaely (om72)
 
 ## Project Description 
-We implemented a flashcard simulation that allows users to study for classes via a CSV file containing terms and definitions. Some key features of our program includes:  
-  * Shuffle order of flashcards (front = terms, back = definitions)
+We implemented a flashcard simulation that allows users to study for classes via a CSV file containing terms and definitions. Some key features of our program includes: 
+  * Translate CSV file contents into flashcards (front = terms, back = definitions)
+  * Shuffle order of flashcards
   * Star flashcards to be able to specifically either practice or test over problematic cards
   * Unstar flashcards when user has successfully mastered the flashcard material
   * Practice specifically over incorrectly answered flashcards during test
